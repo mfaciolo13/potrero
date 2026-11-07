@@ -48,6 +48,28 @@ El build solo se vuelve a generar cuando cambian dependencias nativas, plugins o
 
 Los identificadores de la app (`com.mfaciolo.potrero`) son los mismos en Android e iOS. Cambiarlos después obliga a registrar la app de nuevo en Google y Apple.
 
+## Actualizaciones OTA (EAS Update)
+
+Los cambios de JavaScript y de assets llegan a los celulares sin pasar por las tiendas, con EAS Update. Cada perfil de [eas.json](eas.json) tiene un canal con su mismo nombre (`development`, `preview`, `production`), y un build solo recibe las actualizaciones de su canal.
+
+Para publicar una actualización, con `npx eas login` hecho:
+
+```sh
+npx eas update --channel preview --message "Descripción del cambio"
+npx eas update --channel production --message "Descripción del cambio"
+```
+
+La app busca actualizaciones al abrirse, las descarga y las aplica en la apertura siguiente.
+
+### Cuándo hace falta un build nuevo
+
+Una actualización OTA solo sirve a los builds con el mismo `runtimeVersion`. Acá es la versión de la app (`version` en `app.json`, política `appVersion`), así que:
+
+- **Cambio de JavaScript, estilos o imágenes:** alcanza con `eas update`.
+- **Cambio nativo (nueva dependencia nativa, plugin, permisos o `app.json` nativo):** hay que subir `version` en `app.json` y generar un build nuevo. Los builds viejos dejan de recibir actualizaciones de esa versión, para que no reciban código que necesita librerías que no tienen.
+
+Los builds generados antes de instalar `expo-updates` no reciben actualizaciones: hay que generarlos de nuevo.
+
 ## Versión web (EAS Hosting)
 
 La web se publica en EAS Hosting, el mismo servicio de Expo donde están los builds. Como `app.json` usa `"output": "server"`, hace falta un hosting con servidor, y EAS Hosting lo da sin configuración extra.
