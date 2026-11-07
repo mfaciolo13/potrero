@@ -48,6 +48,35 @@ El build solo se vuelve a generar cuando cambian dependencias nativas, plugins o
 
 Los identificadores de la app (`com.mfaciolo.potrero`) son los mismos en Android e iOS. Cambiarlos después obliga a registrar la app de nuevo en Google y Apple.
 
+## Versión web (EAS Hosting)
+
+La web se publica en EAS Hosting, el mismo servicio de Expo donde están los builds. Como `app.json` usa `"output": "server"`, hace falta un hosting con servidor, y EAS Hosting lo da sin configuración extra.
+
+- **URL de producción:** https://potrero.expo.app
+- **Panel:** https://expo.dev/projects/f0cb5c40-9a06-4389-9b40-85c62085d73c/hosting/deployments
+
+Para publicar una versión nueva, desde la raíz del repo y con `npx eas login` hecho:
+
+```sh
+npm run deploy:web --workspace @potrero/mobile
+```
+
+Eso exporta la web y la promueve a producción. Cada deploy queda además con su propia URL de previsualización, que se ve en el panel.
+
+### Variables de entorno
+
+La web apunta a la API con `EXPO_PUBLIC_API_URL`. Esa variable se incrusta al exportar, así que hay que cargarla en EAS antes de publicar:
+
+```sh
+npx eas env:create --environment production --name EXPO_PUBLIC_API_URL --value https://TU-API.up.railway.app --visibility plaintext
+```
+
+En local se define en `apps/mobile/.env` (hay un [.env.example](.env.example)).
+
+### CORS
+
+La API solo acepta llamadas de los orígenes de `CORS_ORIGINS`. Después de publicar hay que agregar `https://potrero.expo.app` a esa variable en Railway, separada por coma de las otras.
+
 ## Design system y tema
 
 Los tokens y componentes base viven en [theme/](theme/) y [ui/](ui/). La fuente de verdad es la página **Tokens** del [Figma](https://www.figma.com/design/rHZdibYb6E9orNdce1Y2Qm/POTRERO?node-id=1-99). La pantalla [app/showcase.tsx](app/showcase.tsx) muestra todos los tokens y componentes y sirve para compararlos con el Figma. Solo existe en desarrollo: la ruta está protegida con `__DEV__` en el layout raíz y el botón de Inicio que la abre no se renderiza en otros builds.
