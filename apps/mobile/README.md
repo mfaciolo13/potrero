@@ -46,7 +46,7 @@ npm run start --workspace @potrero/mobile -- --dev-client
 
 El build solo se vuelve a generar cuando cambian dependencias nativas, plugins o `app.json`. El código JavaScript se actualiza con el servidor.
 
-Los identificadores de la app (`com.potrero.app`) son los mismos en Android e iOS. Cambiarlos después obliga a registrar la app de nuevo en Google y Apple.
+Los identificadores de la app (`com.mfaciolo.potrero`) son los mismos en Android e iOS. Cambiarlos después obliga a registrar la app de nuevo en Google y Apple.
 
 ## Design system y tema
 
