@@ -9,6 +9,7 @@ const app = createApp({
   pingDb: async () => {
     await prisma.$queryRaw`SELECT 1`;
   },
+  corsOrigins: env.CORS_ORIGINS,
   authenticate: authenticate(createTokenVerifier(env.SUPABASE_URL), createUserStore(prisma)),
 });
 

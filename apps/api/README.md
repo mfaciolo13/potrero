@@ -65,6 +65,7 @@ Variables del servicio:
 | --- | --- |
 | `DATABASE_URL` | La cadena del Transaction pooler de Supabase |
 | `SUPABASE_URL` | La URL del proyecto de Supabase (`https://PROJECT_REF.supabase.co`) |
+| `CORS_ORIGINS` | Los orígenes web que pueden llamar a la API, separados por coma (opcional) |
 | `RAILPACK_NODE_VERSION` | `24`, igual que la CI. La API necesita Node 22.9 o superior |
 | `PORT` | `8080`. Se fija a mano para que coincida con el puerto del dominio público |
 
@@ -98,4 +99,5 @@ Se validan con Zod al arrancar. Si alguna es inválida, la API no levanta.
 | `PORT` | `3000` | Puerto en el que escucha |
 | `DATABASE_URL` | sin valor | Cadena de conexión a Postgres en Supabase (`postgresql://usuario:clave@host:puerto/base`). Obligatoria |
 | `SUPABASE_URL` | sin valor | URL del proyecto de Supabase (`https://PROJECT_REF.supabase.co`). De ahí la API toma las claves públicas (JWKS) para validar los tokens. Obligatoria |
+| `CORS_ORIGINS` | vacía | Orígenes web permitidos, separados por coma (`https://app.ejemplo.com,http://localhost:8081`). Vacía no permite ningún origen. La app móvil no la necesita, solo la versión web. Opcional |
 | `DIRECT_URL` | sin valor | Conexión directa de Supabase. Solo la usa el CLI de Prisma para migrar, la API no la lee |
