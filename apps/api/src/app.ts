@@ -1,15 +1,19 @@
+import cors from "cors";
 import express, { type RequestHandler } from "express";
 
 export interface AppDeps {
   /** Valida el token y carga req.user. Si no se pasa, /me no existe. */
   authenticate?: RequestHandler;
+  /** Origenes web que pueden llamar a la API. Vacio: no se permite ningun origen. */
+  corsOrigins?: string[];
   /** Verifica que la base de datos responde. Si no se pasa, /health/db no existe. */
   pingDb?: () => Promise<void>;
 }
 
-export function createApp({ pingDb, authenticate }: AppDeps = {}) {
+export function createApp({ pingDb, authenticate, corsOrigins = [] }: AppDeps = {}) {
   const app = express();
 
+  app.use(cors({ origin: corsOrigins, allowedHeaders: ["Authorization", "Content-Type"] }));
   app.use(express.json());
 
   app.get("/health", (_req, res) => {

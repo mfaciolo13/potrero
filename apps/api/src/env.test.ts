@@ -40,4 +40,23 @@ describe("parseEnv", () => {
     expect(() => parseEnv({ DATABASE_URL: URL_VALIDA, SUPABASE_URL: SUPABASE, PORT: "abc" })).toThrow();
     expect(() => parseEnv({ DATABASE_URL: URL_VALIDA, SUPABASE_URL: SUPABASE, PORT: "70000" })).toThrow();
   });
+
+  it("CORS_ORIGINS queda vacío por defecto", () => {
+    expect(parseEnv({ DATABASE_URL: URL_VALIDA, SUPABASE_URL: SUPABASE }).CORS_ORIGINS).toEqual([]);
+  });
+
+  it("CORS_ORIGINS separa por comas y limpia espacios y barras finales", () => {
+    const env = parseEnv({
+      DATABASE_URL: URL_VALIDA,
+      SUPABASE_URL: SUPABASE,
+      CORS_ORIGINS: "https://a.com/, http://localhost:8081 ",
+    });
+    expect(env.CORS_ORIGINS).toEqual(["https://a.com", "http://localhost:8081"]);
+  });
+
+  it("rechaza un origen de CORS inválido", () => {
+    expect(() =>
+      parseEnv({ DATABASE_URL: URL_VALIDA, SUPABASE_URL: SUPABASE, CORS_ORIGINS: "no-es-url" }),
+    ).toThrow();
+  });
 });
