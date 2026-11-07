@@ -8,7 +8,8 @@
     "scheme": "potrero",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.potrero.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,6 +18,7 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "package": "com.potrero.app",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -38,6 +40,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f0cb5c40-9a06-4389-9b40-85c62085d73c"
+      }
+    },
+    "owner": "mfaciolo"
   }
 }
