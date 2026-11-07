@@ -12,6 +12,42 @@ npm run start --workspace @potrero/mobile      # Expo Go o build de desarrollo
 npm run web --workspace @potrero/mobile        # en el navegador
 ```
 
+## Build de desarrollo (EAS)
+
+La app usa `expo-dev-client`, así que el login con Google y otras librerías nativas no corren en Expo Go: hace falta un build de desarrollo. El proyecto de EAS es `@mfaciolo/potrero` y los perfiles están en [eas.json](eas.json).
+
+| Perfil | Plataforma | Resultado |
+| --- | --- | --- |
+| `development` | Android | APK instalable en el celular |
+| `development` | iOS | Build para dispositivos registrados (requiere cuenta de Apple Developer) |
+| `development-simulator` | iOS | Build para el simulador de iOS (no requiere cuenta de Apple, solo macOS para usarlo) |
+
+Una sola vez, desde `apps/mobile`:
+
+```sh
+npx eas login
+```
+
+Generar el build (tarda unos minutos en la nube de EAS):
+
+```sh
+npx eas build --profile development --platform android
+npx eas build --profile development --platform ios          # celular iOS
+npx eas build --profile development-simulator --platform ios # simulador
+```
+
+Al terminar, EAS muestra un link y un QR. En Android se abre desde el celular y se instala el APK. En iOS, el celular tiene que estar registrado antes con `npx eas device:create`.
+
+Con el build instalado, se levanta el servidor y la app se conecta sola:
+
+```sh
+npm run start --workspace @potrero/mobile -- --dev-client
+```
+
+El build solo se vuelve a generar cuando cambian dependencias nativas, plugins o `app.json`. El código JavaScript se actualiza con el servidor.
+
+Los identificadores de la app (`com.mfaciolo.potrero`) son los mismos en Android e iOS. Cambiarlos después obliga a registrar la app de nuevo en Google y Apple.
+
 ## Design system y tema
 
 Los tokens y componentes base viven en [theme/](theme/) y [ui/](ui/). La fuente de verdad es la página **Tokens** del [Figma](https://www.figma.com/design/rHZdibYb6E9orNdce1Y2Qm/POTRERO?node-id=1-99). La pantalla [app/showcase.tsx](app/showcase.tsx) muestra todos los tokens y componentes y sirve para compararlos con el Figma. Solo existe en desarrollo: la ruta está protegida con `__DEV__` en el layout raíz y el botón de Inicio que la abre no se renderiza en otros builds.
