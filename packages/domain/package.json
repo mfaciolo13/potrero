@@ -4,7 +4,17 @@
   "private": true,
   "description": "Lógica de dominio compartida: torneos, equipos, fixture y resultados",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "postinstall": "npm run build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests"

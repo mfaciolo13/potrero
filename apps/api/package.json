@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "tsx watch --env-file-if-exists=.env src/index.ts",
-    "build": "prisma generate && tsc -p tsconfig.build.json",
+    "build": "npm run build --workspace @potrero/domain && prisma generate && tsc -p tsconfig.build.json",
     "start": "node --env-file-if-exists=.env dist/index.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -20,6 +20,7 @@
     "db:deploy": "prisma migrate deploy"
   },
   "dependencies": {
+    "@potrero/domain": "*",
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
     "cors": "^2.8.6",
