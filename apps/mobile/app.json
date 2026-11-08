@@ -49,6 +49,12 @@
         "projectId": "f0cb5c40-9a06-4389-9b40-85c62085d73c"
       }
     },
-    "owner": "mfaciolo"
+    "owner": "mfaciolo",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f0cb5c40-9a06-4389-9b40-85c62085d73c"
+    }
   }
 }
