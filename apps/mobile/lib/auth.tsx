@@ -4,6 +4,8 @@ import * as WebBrowser from "expo-web-browser";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Platform } from "react-native";
 
+import { t } from "@/i18n";
+
 import { parseSessionTokens } from "./authRedirect";
 import { supabase } from "./supabase";
 
@@ -20,7 +22,7 @@ const AuthContext = createContext<AuthState | null>(null);
 
 const readSessionFromUrl = async (url: string) => {
   const tokens = parseSessionTokens(url);
-  if (!tokens) throw new Error("La respuesta de Google no trae la sesión");
+  if (!tokens) throw new Error(t("errors.missingSession"));
   const { error } = await supabase.auth.setSession({
     access_token: tokens.accessToken,
     refresh_token: tokens.refreshToken,

@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider as NavigationThemeProvide
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useMemo } from "react";
 
+import { t } from "@/i18n";
 import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 
@@ -51,7 +52,7 @@ const Navigation = () => {
         <Stack.Screen name="privacidad" />
         <Stack.Screen name="eliminar-cuenta" />
         <Stack.Protected guard={__DEV__}>
-          <Stack.Screen name="showcase" options={{ headerShown: true, title: "Design system" }} />
+          <Stack.Screen name="showcase" options={{ headerShown: true, title: t("navigation.designSystem") }} />
         </Stack.Protected>
       </Stack>
     </NavigationThemeProvider>

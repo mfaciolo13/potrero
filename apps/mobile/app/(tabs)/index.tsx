@@ -1,5 +1,6 @@
 import { Link } from "expo-router";
 
+import { t } from "@/i18n";
 import { useSessionActions } from "@/lib/useSessionActions";
 import { useTheme } from "@/theme";
 import { Button, Screen, Text } from "@/ui";
@@ -10,17 +11,17 @@ const Index = () => {
 
   return (
     <Screen contentStyle={{ justifyContent: "center", alignItems: "center", gap: theme.spacing.s4 }}>
-      <Text variant="displayTitle">Potrero</Text>
+      <Text variant="displayTitle">{t("home.title")}</Text>
       {loading ? null : session ? (
         <>
           <Text color="mute" align="center">
-            Sesión iniciada como {session.user.email}
+            {t("home.signedInAs", { email: session.user.email ?? "" })}
           </Text>
-          <Button label="Probar la API" variant="lime" onPress={handleCheckApi} />
-          <Button label="Cerrar sesión" variant="ghost" onPress={handleSignOut} />
+          <Button label={t("home.checkApi")} variant="lime" onPress={handleCheckApi} />
+          <Button label={t("home.signOut")} variant="ghost" onPress={handleSignOut} />
         </>
       ) : (
-        <Button label="Continuar con Google" variant="primary" onPress={handleSignIn} />
+        <Button label={t("home.signInWithGoogle")} variant="primary" onPress={handleSignIn} />
       )}
       {message !== "" && (
         <Text color="mute" align="center">
@@ -29,7 +30,7 @@ const Index = () => {
       )}
       {__DEV__ && (
         <Link href="/showcase" asChild>
-          <Button label="Ver design system" variant="lime" />
+          <Button label={t("home.openShowcase")} variant="lime" />
         </Link>
       )}
     </Screen>

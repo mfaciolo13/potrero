@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { t } from "@/i18n";
+
 import { apiFetch } from "./api";
 import { useAuth } from "./auth";
 
@@ -12,7 +14,7 @@ export const useSessionActions = () => {
     try {
       await signInWithGoogle();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo iniciar sesión");
+      setMessage(error instanceof Error ? error.message : t("errors.signInFailed"));
     }
   };
 
@@ -24,9 +26,9 @@ export const useSessionActions = () => {
   const handleCheckApi = async () => {
     try {
       const response = await apiFetch("/me");
-      setMessage(`GET /me: ${response.status} ${await response.text()}`);
+      setMessage(t("home.apiResult", { status: response.status, body: await response.text() }));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "No se pudo llamar a la API");
+      setMessage(error instanceof Error ? error.message : t("errors.apiFailed"));
     }
   };
 
