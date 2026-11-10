@@ -99,6 +99,15 @@ En local se define en `apps/mobile/.env` (hay un [.env.example](.env.example)).
 
 La API solo acepta llamadas de los orígenes de `CORS_ORIGINS`. Después de publicar hay que agregar `https://potrero.expo.app` a esa variable en Railway, separada por coma de las otras.
 
+### Páginas públicas para las tiendas
+
+Se ven sin iniciar sesión. El contenido sale de `lib/legal/` y es una copia de `docs/politica-de-privacidad.md`: si cambia el documento, hay que actualizar también el archivo de `lib/legal/`.
+
+| Página | URL | Dónde cargarla |
+| --- | --- | --- |
+| Política de privacidad | https://potrero.expo.app/privacidad | Google Play (política de privacidad) y App Store Connect (URL de privacidad) |
+| Eliminar la cuenta | https://potrero.expo.app/eliminar-cuenta | Google Play (URL para solicitar el borrado de cuenta, sección Seguridad de los datos) |
+
 ## Design system y tema
 
 Los tokens y componentes base viven en [theme/](theme/) y [ui/](ui/). La fuente de verdad es la página **Tokens** del [Figma](https://www.figma.com/design/rHZdibYb6E9orNdce1Y2Qm/POTRERO?node-id=1-99). La pantalla [app/showcase.tsx](app/showcase.tsx) muestra todos los tokens y componentes y sirve para compararlos con el Figma. Solo existe en desarrollo: la ruta está protegida con `__DEV__` en el layout raíz y el botón de Inicio que la abre no se renderiza en otros builds.
