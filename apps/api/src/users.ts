@@ -4,6 +4,7 @@ import type { TokenClaims } from "./tokens.js";
 
 export interface UserStore {
   upsertFromClaims(claims: TokenClaims): Promise<AuthUser & { removed: boolean }>;
+  acceptPolicies(userId: string, version: string, at?: Date): Promise<void>;
 }
 
 export function displayName(claims: TokenClaims) {
@@ -17,9 +18,20 @@ export function createUserStore(prisma: Pick<PrismaClient, "user">): UserStore {
         where: { id: claims.id },
         create: { id: claims.id, name: displayName(claims) },
         update: {},
-        select: { id: true, role: true, removedAt: true },
+        select: { id: true, role: true, policiesVersion: true, removedAt: true },
       });
-      return { id: user.id, role: user.role, removed: user.removedAt !== null };
+      return {
+        id: user.id,
+        role: user.role,
+        policiesVersion: user.policiesVersion,
+        removed: user.removedAt !== null,
+      };
+    },
+    async acceptPolicies(userId, version, at = new Date()) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { policiesVersion: version, policiesAcceptedAt: at },
+      });
     },
   };
 }

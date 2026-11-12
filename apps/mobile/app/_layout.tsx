@@ -3,7 +3,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useMemo } from "react";
 
 import { t } from "@/i18n";
-import { AuthProvider } from "@/lib/auth";
+import { AuthProvider, useAuth } from "@/lib/auth";
+import { needsPolicyAcceptance } from "@/lib/policies";
+import { ProfileProvider, useProfile } from "@/lib/profile";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -20,7 +22,9 @@ const RootLayout = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Navigation />
+        <ProfileProvider>
+          <Navigation />
+        </ProfileProvider>
       </AuthProvider>
     </ThemeProvider>
   );
@@ -28,6 +32,9 @@ const RootLayout = () => {
 
 const Navigation = () => {
   const theme = useTheme();
+  const { session } = useAuth();
+  const { profile, loading } = useProfile();
+  const needsPolicies = session !== null && needsPolicyAcceptance(profile);
 
   const navigationTheme = useMemo(() => {
     const base = theme.scheme === "dark" ? DarkTheme : DefaultTheme;
@@ -45,10 +52,18 @@ const Navigation = () => {
     };
   }, [theme]);
 
+  if (loading) return null;
+
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
-        <Stack.Screen name="(tabs)" />
+        <Stack.Protected guard={needsPolicies}>
+          <Stack.Screen name="aceptar-politicas" />
+        </Stack.Protected>
+        <Stack.Protected guard={!needsPolicies}>
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+        <Stack.Screen name="politicas-de-uso" />
         <Stack.Screen name="privacidad" />
         <Stack.Screen name="eliminar-cuenta" />
         <Stack.Protected guard={__DEV__}>

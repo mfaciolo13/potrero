@@ -5,12 +5,15 @@ import { env } from "./env.js";
 import { createTokenVerifier } from "./tokens.js";
 import { createUserStore } from "./users.js";
 
+const users = createUserStore(prisma);
+
 const app = createApp({
   pingDb: async () => {
     await prisma.$queryRaw`SELECT 1`;
   },
   corsOrigins: env.CORS_ORIGINS,
-  authenticate: authenticate(createTokenVerifier(env.SUPABASE_URL), createUserStore(prisma)),
+  authenticate: authenticate(createTokenVerifier(env.SUPABASE_URL), users),
+  acceptPolicies: (userId, version) => users.acceptPolicies(userId, version),
 });
 
 app.listen(env.PORT, () => {
