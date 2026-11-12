@@ -2,6 +2,7 @@ import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type JWK } from "jose";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { CURRENT_POLICIES_VERSION } from "@potrero/domain";
 import { createApp } from "./app.js";
 import { authenticate } from "./auth.js";
 import { createTokenVerifier } from "./tokens.js";
@@ -27,12 +28,18 @@ const sign = (
     .setExpirationTime(expires)
     .sign(key);
 
-const rows = new Map<string, { role: "PLAYER" | null; removed: boolean; name: string }>();
+const rows = new Map<
+  string,
+  { role: "PLAYER" | null; removed: boolean; name: string; policiesVersion: string | null }
+>();
 const store: UserStore = {
   async upsertFromClaims(claims) {
-    if (!rows.has(claims.id)) rows.set(claims.id, { role: null, removed: false, name: displayName(claims) });
+    if (!rows.has(claims.id)) rows.set(claims.id, { role: null, removed: false, name: displayName(claims), policiesVersion: null });
     const row = rows.get(claims.id)!;
-    return { id: claims.id, role: row.role, removed: row.removed };
+    return { id: claims.id, role: row.role, policiesVersion: row.policiesVersion, removed: row.removed };
+  },
+  async acceptPolicies(userId, version) {
+    rows.get(userId)!.policiesVersion = version;
   },
 };
 
@@ -42,7 +49,10 @@ describe("authenticate", () => {
 
   beforeAll(async () => {
     const verify = createTokenVerifier(SUPABASE_URL, createLocalJWKSet({ keys: [jwk] }));
-    const app = createApp({ authenticate: authenticate(verify, store) });
+    const app = createApp({
+      authenticate: authenticate(verify, store),
+      acceptPolicies: (userId, version) => store.acceptPolicies(userId, version),
+    });
     await new Promise<void>((resolve) => {
       server = app.listen(0, () => resolve());
     });
@@ -86,13 +96,48 @@ describe("authenticate", () => {
   it("acepta un token valido y crea el usuario sin rol", async () => {
     const res = await me(await sign());
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ id: USER_ID, role: null });
+    expect(await res.json()).toEqual({ id: USER_ID, role: null, policiesVersion: null, policiesAccepted: false });
     expect(rows.get(USER_ID)?.name).toBe("ana");
   });
 
   it("devuelve el rol guardado del usuario", async () => {
     rows.get(USER_ID)!.role = "PLAYER";
-    expect(await (await me(await sign())).json()).toEqual({ id: USER_ID, role: "PLAYER" });
+    expect(await (await me(await sign())).json()).toEqual({
+      id: USER_ID,
+      role: "PLAYER",
+      policiesVersion: null,
+      policiesAccepted: false,
+    });
+  });
+
+  const accept = (token: string, body: unknown) =>
+    fetch(`${baseUrl}/me/accept-policies`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+  it("exige token para aceptar las políticas", async () => {
+    const res = await fetch(`${baseUrl}/me/accept-policies`, { method: "POST" });
+    expect(res.status).toBe(401);
+  });
+
+  it("rechaza aceptar una versión que no es la vigente", async () => {
+    const res = await accept(await sign(), { version: "2020-01-01" });
+    expect(res.status).toBe(400);
+    expect(rows.get(USER_ID)?.policiesVersion).toBeNull();
+  });
+
+  it("rechaza aceptar sin indicar la versión", async () => {
+    expect((await accept(await sign(), {})).status).toBe(400);
+  });
+
+  it("registra la aceptación de la versión vigente", async () => {
+    const res = await accept(await sign(), { version: CURRENT_POLICIES_VERSION });
+    expect(res.status).toBe(200);
+    expect(rows.get(USER_ID)?.policiesVersion).toBe(CURRENT_POLICIES_VERSION);
+    const me = await (await fetch(`${baseUrl}/me`, { headers: { authorization: `Bearer ${await sign()}` } })).json();
+    expect(me.policiesAccepted).toBe(true);
   });
 
   it("rechaza con 403 a un usuario dado de baja", async () => {

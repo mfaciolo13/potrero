@@ -7,6 +7,7 @@ import type { UserStore } from "./users.js";
 export interface AuthUser {
   id: string;
   role: UserRole | null;
+  policiesVersion: string | null;
 }
 
 declare module "express-serve-static-core" {

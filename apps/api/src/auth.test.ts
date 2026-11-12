@@ -48,29 +48,29 @@ describe("requireRole", () => {
   });
 
   it("responde 403 si el usuario todavia no eligio un rol", async () => {
-    const res = await call("/organizer", { id: "u1", role: null });
+    const res = await call("/organizer", { id: "u1", role: null, policiesVersion: null });
 
     expect(res.status).toBe(403);
     expect(await res.json()).toEqual({ error: "forbidden" });
   });
 
   it("responde 403 si el rol no esta entre los permitidos", async () => {
-    const res = await call("/organizer", { id: "u1", role: "PLAYER" });
+    const res = await call("/organizer", { id: "u1", role: "PLAYER", policiesVersion: null });
 
     expect(res.status).toBe(403);
   });
 
   it("deja pasar a cualquiera de los roles permitidos", async () => {
-    const organizer = await call("/organizer", { id: "u1", role: "ORGANIZER" });
-    const admin = await call("/organizer", { id: "u2", role: "ADMIN" });
+    const organizer = await call("/organizer", { id: "u1", role: "ORGANIZER", policiesVersion: null });
+    const admin = await call("/organizer", { id: "u2", role: "ADMIN", policiesVersion: null });
 
     expect(organizer.status).toBe(200);
     expect(admin.status).toBe(200);
   });
 
   it("el rol de admin no se hereda en endpoints que lo exigen solo a el", async () => {
-    const organizer = await call("/admin", { id: "u1", role: "ORGANIZER" });
-    const admin = await call("/admin", { id: "u2", role: "ADMIN" });
+    const organizer = await call("/admin", { id: "u1", role: "ORGANIZER", policiesVersion: null });
+    const admin = await call("/admin", { id: "u2", role: "ADMIN", policiesVersion: null });
 
     expect(organizer.status).toBe(403);
     expect(admin.status).toBe(200);
