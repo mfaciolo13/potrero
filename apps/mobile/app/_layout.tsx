@@ -2,6 +2,8 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider as NavigationThemeProvide
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useMemo } from "react";
 
+import { t } from "@/i18n";
+import { AuthProvider } from "@/lib/auth";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -17,38 +19,40 @@ const RootLayout = () => {
 
   return (
     <ThemeProvider>
-      <Navigation />
+      <AuthProvider>
+        <Navigation />
+      </AuthProvider>
     </ThemeProvider>
   );
 };
 
 const Navigation = () => {
-  const t = useTheme();
+  const theme = useTheme();
 
   const navigationTheme = useMemo(() => {
-    const base = t.scheme === "dark" ? DarkTheme : DefaultTheme;
+    const base = theme.scheme === "dark" ? DarkTheme : DefaultTheme;
     return {
       ...base,
       colors: {
         ...base.colors,
-        primary: t.colors.green,
-        background: t.colors.bg,
-        card: t.colors.bg,
-        text: t.colors.ink,
-        border: t.colors.line,
-        notification: t.colors.cardRed,
+        primary: theme.colors.green,
+        background: theme.colors.bg,
+        card: theme.colors.bg,
+        text: theme.colors.ink,
+        border: theme.colors.line,
+        notification: theme.colors.cardRed,
       },
     };
-  }, [t]);
+  }, [theme]);
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
-      <Stack screenOptions={{ headerShown: false, headerTitleStyle: t.typography.title }}>
+      <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="privacidad" />
         <Stack.Screen name="eliminar-cuenta" />
         <Stack.Protected guard={__DEV__}>
-          <Stack.Screen name="showcase" options={{ headerShown: true, title: "Design system" }} />
+          <Stack.Screen name="showcase" options={{ headerShown: true, title: t("navigation.designSystem") }} />
         </Stack.Protected>
       </Stack>
     </NavigationThemeProvider>

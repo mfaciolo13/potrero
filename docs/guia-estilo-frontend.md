@@ -98,3 +98,14 @@ npx eslint apps/mobile
 ```
 
 Ambos comandos tienen que terminar sin errores. El flujo de ramas, commits y PR está en [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## 11. Textos y traducciones
+
+Todo texto que ve el usuario (etiquetas, títulos, mensajes de error, placeholders, textos de accesibilidad) vive en `apps/mobile/i18n/es.ts`, agrupado por pantalla o tema. Así, sumar otro idioma más adelante es agregar un archivo y no tocar los componentes.
+
+- Usar la función `t` de `@/i18n`: `t("home.signOut")`. Las claves están tipadas, así que una clave que no existe da error de tipos.
+- Para valores variables, usar parámetros con llaves dobles: `"Sesión iniciada como {{email}}"` y `t("home.signedInAs", { email })`. No concatenar textos.
+- Las claves van en inglés y en `camelCase`; los valores, en español.
+- No van en las traducciones: los identificadores técnicos, los nombres de rutas, los errores pensados solo para desarrolladores, y la pantalla de `showcase`, que es una demo del design system.
+- Los documentos legales de `lib/legal/` son contenido versionado por idioma y revisado por un abogado, así que se mantienen como archivos aparte y no pasan por `t`.
+- No nombrar `t` a otra cosa en el mismo archivo. Para el tema, usar `theme`.
