@@ -34,6 +34,7 @@ export const Screen = ({ children, scroll = true, edges = ["left", "right"], con
       {scroll ? (
         <ScrollView
           contentContainerStyle={[styles.content, contentStyle]}
+          contentInsetAdjustmentBehavior="automatic"
           keyboardShouldPersistTaps="handled"
         >
           {children}
