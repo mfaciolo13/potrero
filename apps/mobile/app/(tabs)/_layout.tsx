@@ -5,7 +5,7 @@ import { t } from "@/i18n";
 const TabLayout = () => {
   return (
     <Tabs>
-      <Tabs.Screen name="index" options={{ title: t("navigation.home") }} />
+      <Tabs.Screen name="home" options={{ title: t("navigation.home") }} />
     </Tabs>
   );
 };

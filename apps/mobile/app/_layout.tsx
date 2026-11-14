@@ -10,6 +10,8 @@ import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
 
+export const unstable_settings = { initialRouteName: "index" };
+
 const RootLayout = () => {
   const [fontsLoaded, fontsError] = useThemeFonts();
 
@@ -57,6 +59,7 @@ const Navigation = () => {
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
+        <Stack.Screen name="index" />
         <Stack.Protected guard={stage === "login"}>
           <Stack.Screen name="login" />
         </Stack.Protected>
