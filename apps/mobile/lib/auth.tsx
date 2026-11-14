@@ -15,6 +15,8 @@ type AuthState = {
   session: Session | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<{ needsConfirmation: boolean }>;
   signOut: () => Promise<void>;
 };
 
@@ -66,14 +68,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (result.type === "success") await readSessionFromUrl(result.url);
   }, []);
 
+  const signInWithEmail = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }, []);
+
+  const signUpWithEmail = useCallback(async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    return { needsConfirmation: data.session === null };
+  }, []);
+
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   }, []);
 
   const value = useMemo(
-    () => ({ session, loading, signInWithGoogle, signOut }),
-    [session, loading, signInWithGoogle, signOut],
+    () => ({ session, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut }),
+    [session, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
