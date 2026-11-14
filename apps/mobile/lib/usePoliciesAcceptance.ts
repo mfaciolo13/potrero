@@ -4,11 +4,9 @@ import { useState } from "react";
 import { t } from "@/i18n";
 
 import { apiFetch } from "./api";
-import { useAuth } from "./auth";
 import { useProfile } from "./profile";
 
 export const usePoliciesAcceptance = () => {
-  const { signOut } = useAuth();
   const { refresh } = useProfile();
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -32,9 +30,5 @@ export const usePoliciesAcceptance = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
-  return { accepted, setAccepted, submitting, error, handleSubmit, handleSignOut };
+  return { accepted, setAccepted, submitting, error, handleSubmit };
 };

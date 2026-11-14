@@ -5,11 +5,11 @@ import { t } from "@/i18n";
 import { useAuth } from "./auth";
 import { authErrorKey, validateCredentials } from "./credentials";
 
-export type EmailAuthMode = "signIn" | "signUp";
+export type LoginMode = "signIn" | "signUp";
 
-export const useEmailAuth = () => {
-  const { signInWithEmail, signUpWithEmail } = useAuth();
-  const [mode, setMode] = useState<EmailAuthMode>("signIn");
+export const useLogin = () => {
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
+  const [mode, setMode] = useState<LoginMode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -45,6 +45,16 @@ export const useEmailAuth = () => {
     }
   };
 
+  const handleGoogle = async () => {
+    setError("");
+    setNotice("");
+    try {
+      await signInWithGoogle();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : t("errors.signInFailed"));
+    }
+  };
+
   return {
     mode,
     email,
@@ -56,5 +66,6 @@ export const useEmailAuth = () => {
     notice,
     handleSubmit,
     handleToggleMode,
+    handleGoogle,
   };
 };

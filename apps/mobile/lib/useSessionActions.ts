@@ -6,22 +6,8 @@ import { apiFetch } from "./api";
 import { useAuth } from "./auth";
 
 export const useSessionActions = () => {
-  const { session, loading, signInWithGoogle, signOut } = useAuth();
+  const { session } = useAuth();
   const [message, setMessage] = useState("");
-
-  const handleSignIn = async () => {
-    setMessage("");
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : t("errors.signInFailed"));
-    }
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    setMessage("");
-  };
 
   const handleCheckApi = async () => {
     try {
@@ -32,5 +18,5 @@ export const useSessionActions = () => {
     }
   };
 
-  return { session, loading, message, handleSignIn, handleSignOut, handleCheckApi };
+  return { session, message, handleCheckApi };
 };

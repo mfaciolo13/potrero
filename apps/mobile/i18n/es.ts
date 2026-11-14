@@ -6,13 +6,14 @@ export const es = {
   home: {
     title: "Potrero",
     signedInAs: "Sesión iniciada como {{email}}",
-    signInWithGoogle: "Continuar con Google",
-    signOut: "Cerrar sesión",
     checkApi: "Probar la API",
     apiResult: "GET /me: {{status}} {{body}}",
     openShowcase: "Ver design system",
   },
   auth: {
+    subtitle: "Iniciá sesión o creá tu cuenta para empezar.",
+    continueWithGoogle: "Continuar con Google",
+    signOut: "Cerrar sesión",
     email: "Mail",
     password: "Contraseña",
     signIn: "Iniciar sesión",

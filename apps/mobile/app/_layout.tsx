@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 
 import { t } from "@/i18n";
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { needsPolicyAcceptance } from "@/lib/policies";
+import { accessStage } from "@/lib/accessStage";
 import { ProfileProvider, useProfile } from "@/lib/profile";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 
@@ -34,7 +34,7 @@ const Navigation = () => {
   const theme = useTheme();
   const { session } = useAuth();
   const { profile, loading } = useProfile();
-  const needsPolicies = session !== null && needsPolicyAcceptance(profile);
+  const stage = accessStage(session !== null, profile);
 
   const navigationTheme = useMemo(() => {
     const base = theme.scheme === "dark" ? DarkTheme : DefaultTheme;
@@ -57,10 +57,13 @@ const Navigation = () => {
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
-        <Stack.Protected guard={needsPolicies}>
+        <Stack.Protected guard={stage === "login"}>
+          <Stack.Screen name="iniciar-sesion" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === "policies"}>
           <Stack.Screen name="aceptar-politicas" />
         </Stack.Protected>
-        <Stack.Protected guard={!needsPolicies}>
+        <Stack.Protected guard={stage === "app"}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
         <Stack.Screen name="politicas-de-uso" />

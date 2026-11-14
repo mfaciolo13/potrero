@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { View } from "react-native";
 
+import { SignOutButton } from "@/components/SignOutButton";
 import { t } from "@/i18n";
 import { usePoliciesAcceptance } from "@/lib/usePoliciesAcceptance";
 import { makeStyles } from "@/theme";
@@ -13,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AcceptPolicies = () => {
   const styles = useStyles();
-  const { accepted, setAccepted, submitting, error, handleSubmit, handleSignOut } = usePoliciesAcceptance();
+  const { accepted, setAccepted, submitting, error, handleSubmit } = usePoliciesAcceptance();
 
   return (
     <Screen edges={["top", "left", "right"]} contentStyle={styles.content}>
@@ -30,7 +31,7 @@ const AcceptPolicies = () => {
       <Checkbox label={t("policies.accept")} checked={accepted} onChange={setAccepted} />
       {error !== "" && <Text color="badFg">{error}</Text>}
       <Button label={t("policies.continue")} disabled={!accepted} loading={submitting} onPress={handleSubmit} />
-      <Button label={t("home.signOut")} variant="ghost" onPress={handleSignOut} />
+      <SignOutButton />
     </Screen>
   );
 };

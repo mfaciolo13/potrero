@@ -4,7 +4,7 @@ import { t } from "./index";
 
 describe("t", () => {
   it("devuelve el texto de una clave", () => {
-    expect(t("home.signOut")).toBe("Cerrar sesión");
+    expect(t("auth.signOut")).toBe("Cerrar sesión");
   });
 
   it("reemplaza los parámetros", () => {
