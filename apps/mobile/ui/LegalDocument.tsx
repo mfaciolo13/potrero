@@ -3,21 +3,30 @@ import { View } from "react-native";
 import type { LegalDocument as LegalDocumentData } from "@/lib/legal/types";
 import { makeStyles } from "@/theme";
 
+import { Button } from "./Button";
 import { Screen } from "./Screen";
 import { Text } from "./Text";
 
 const useStyles = makeStyles((t) => ({
+  back: { alignSelf: "flex-start", marginBottom: t.spacing.s4 },
   header: { gap: t.spacing.s3, marginBottom: t.spacing.s6 },
   section: { gap: t.spacing.s3, marginBottom: t.spacing.s6 },
   item: { flexDirection: "row", gap: t.spacing.s2 },
   grow: { flex: 1 },
 }));
 
-export const LegalDocument = ({ document }: { document: LegalDocumentData }) => {
+type LegalDocumentProps = {
+  document: LegalDocumentData;
+  backLabel: string;
+  onBack: () => void;
+};
+
+export const LegalDocument = ({ document, backLabel, onBack }: LegalDocumentProps) => {
   const styles = useStyles();
 
   return (
-    <Screen>
+    <Screen edges={["top", "left", "right"]}>
+      <Button label={backLabel} variant="ghost" size="sm" style={styles.back} onPress={onBack} />
       <View style={styles.header}>
         <Text variant="displayTitle">{document.title}</Text>
         <Text color="mute">{document.intro}</Text>

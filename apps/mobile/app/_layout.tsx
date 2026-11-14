@@ -54,8 +54,6 @@ const Navigation = () => {
 
   if (loading) return null;
 
-  const legalOptions = { headerShown: true, title: "", headerBackTitle: t("navigation.back"), headerShadowVisible: false };
-
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
@@ -68,9 +66,9 @@ const Navigation = () => {
         <Stack.Protected guard={stage === "app"}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
-        <Stack.Screen name="politicas-de-uso" options={legalOptions} />
-        <Stack.Screen name="privacidad" options={legalOptions} />
-        <Stack.Screen name="eliminar-cuenta" options={legalOptions} />
+        <Stack.Screen name="politicas-de-uso" />
+        <Stack.Screen name="privacidad" />
+        <Stack.Screen name="eliminar-cuenta" />
         <Stack.Protected guard={__DEV__}>
           <Stack.Screen name="showcase" options={{ headerShown: true, title: t("navigation.designSystem") }} />
         </Stack.Protected>

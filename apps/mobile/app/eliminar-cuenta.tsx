@@ -1,6 +1,6 @@
+import { LegalScreen } from "@/components/LegalScreen";
 import { accountDeletion } from "@/lib/legal/accountDeletion";
-import { LegalDocument } from "@/ui";
 
-const AccountDeletion = () => <LegalDocument document={accountDeletion} />;
+const AccountDeletion = () => <LegalScreen document={accountDeletion} />;
 
 export default AccountDeletion;
