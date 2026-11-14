@@ -18,6 +18,7 @@ const AcceptPolicies = () => {
 
   return (
     <Screen edges={["top", "left", "right"]} contentStyle={styles.content}>
+      <SignOutButton variant="cross" />
       <Text variant="displayTitle">{t("policies.title")}</Text>
       <Text color="mute">{t("policies.intro")}</Text>
       <View style={styles.links}>
@@ -31,7 +32,6 @@ const AcceptPolicies = () => {
       <Checkbox label={t("policies.accept")} checked={accepted} onChange={setAccepted} />
       {error !== "" && <Text color="badFg">{error}</Text>}
       <Button label={t("policies.continue")} disabled={!accepted} loading={submitting} onPress={handleSubmit} />
-      <SignOutButton />
     </Screen>
   );
 };
