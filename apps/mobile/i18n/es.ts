@@ -1,6 +1,7 @@
 export const es = {
   navigation: {
     home: "Inicio",
+    back: "Volver",
     designSystem: "Design system",
   },
   home: {

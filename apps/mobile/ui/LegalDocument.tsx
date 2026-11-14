@@ -17,7 +17,7 @@ export const LegalDocument = ({ document }: { document: LegalDocumentData }) => 
   const styles = useStyles();
 
   return (
-    <Screen edges={["top", "left", "right"]}>
+    <Screen>
       <View style={styles.header}>
         <Text variant="displayTitle">{document.title}</Text>
         <Text color="mute">{document.intro}</Text>
