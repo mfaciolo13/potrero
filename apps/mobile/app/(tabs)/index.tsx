@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 
-import { SignOutButton } from "@/components/SignOutButton";
+import { SignOutButton } from "@/components";
 import { t } from "@/i18n";
 import { useSessionActions } from "@/lib/useSessionActions";
 import { useTheme } from "@/theme";

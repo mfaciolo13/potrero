@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import { View } from "react-native";
 
-import { SignOutButton } from "@/components/SignOutButton";
+import { SignOutButton } from "@/components";
 import { t } from "@/i18n";
 import { usePoliciesAcceptance } from "@/lib/usePoliciesAcceptance";
 import { makeStyles } from "@/theme";
@@ -22,10 +22,10 @@ const AcceptPolicies = () => {
       <Text variant="displayTitle">{t("policies.title")}</Text>
       <Text color="mute">{t("policies.intro")}</Text>
       <View style={styles.links}>
-        <Link href="/politicas-de-uso" asChild>
+        <Link href="/terms-of-use" asChild>
           <Button label={t("policies.readTerms")} variant="outline" />
         </Link>
-        <Link href="/privacidad" asChild>
+        <Link href="/privacy" asChild>
           <Button label={t("policies.readPrivacy")} variant="outline" />
         </Link>
       </View>

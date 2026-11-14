@@ -58,17 +58,17 @@ const Navigation = () => {
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
         <Stack.Protected guard={stage === "login"}>
-          <Stack.Screen name="iniciar-sesion" />
+          <Stack.Screen name="login" />
         </Stack.Protected>
         <Stack.Protected guard={stage === "policies"}>
-          <Stack.Screen name="aceptar-politicas" />
+          <Stack.Screen name="accept-policies" />
         </Stack.Protected>
         <Stack.Protected guard={stage === "app"}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
-        <Stack.Screen name="politicas-de-uso" />
-        <Stack.Screen name="privacidad" />
-        <Stack.Screen name="eliminar-cuenta" />
+        <Stack.Screen name="terms-of-use" />
+        <Stack.Screen name="privacy" />
+        <Stack.Screen name="delete-account" />
         <Stack.Protected guard={__DEV__}>
           <Stack.Screen name="showcase" options={{ headerShown: true, title: t("navigation.designSystem") }} />
         </Stack.Protected>

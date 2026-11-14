@@ -1,4 +1,4 @@
-import { LegalScreen } from "@/components/LegalScreen";
+import { LegalScreen } from "@/components";
 import { privacyPolicy } from "@/lib/legal/privacy";
 
 const Privacy = () => <LegalScreen document={privacyPolicy} />;

@@ -38,7 +38,7 @@ export const accountDeletion: LegalDocument = {
     },
     {
       heading: "Más información",
-      blocks: ["Mirá la política de privacidad en /privacidad para saber cómo tratamos los datos."],
+      blocks: ["Mirá la política de privacidad en /privacy para saber cómo tratamos los datos."],
     },
   ],
 };
