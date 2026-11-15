@@ -12,6 +12,7 @@ export const useLogin = () => {
   const [mode, setMode] = useState<LoginMode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -20,6 +21,10 @@ export const useLogin = () => {
     setMode((current) => (current === "signIn" ? "signUp" : "signIn"));
     setError("");
     setNotice("");
+  };
+
+  const handleTogglePasswordVisible = () => {
+    setPasswordVisible((current) => !current);
   };
 
   const handleSubmit = async () => {
@@ -61,9 +66,11 @@ export const useLogin = () => {
     setEmail,
     password,
     setPassword,
+    passwordVisible,
     submitting,
     error,
     notice,
+    handleTogglePasswordVisible,
     handleSubmit,
     handleToggleMode,
     handleGoogle,
