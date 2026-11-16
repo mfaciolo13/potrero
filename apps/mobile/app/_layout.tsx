@@ -35,8 +35,8 @@ const RootLayout = () => {
 const Navigation = () => {
   const theme = useTheme();
   const { session } = useAuth();
-  const { profile, loading } = useProfile();
-  const stage = accessStage(session !== null, profile);
+  const { profile, loading, error } = useProfile();
+  const stage = accessStage(session !== null, profile, error);
 
   const navigationTheme = useMemo(() => {
     const base = theme.scheme === "dark" ? DarkTheme : DefaultTheme;
@@ -62,6 +62,9 @@ const Navigation = () => {
         <Stack.Screen name="index" />
         <Stack.Protected guard={stage === "login"}>
           <Stack.Screen name="login" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === "error"}>
+          <Stack.Screen name="profile-error" />
         </Stack.Protected>
         <Stack.Protected guard={stage === "policies"}>
           <Stack.Screen name="accept-policies" />
