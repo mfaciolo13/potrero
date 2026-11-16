@@ -1,18 +1,21 @@
-import { ActivityIndicator, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { View } from "react-native";
 
-import { makeStyles, useTheme } from "@/theme";
+import { makeStyles } from "@/theme";
+
+import { AnimatedLogo } from "./AnimatedLogo";
 
 const useStyles = makeStyles((t) => ({
-  screen: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: t.colors.bg },
+  screen: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: t.colors.pitch },
 }));
 
 export const LoadingScreen = () => {
-  const theme = useTheme();
   const styles = useStyles();
 
   return (
     <View style={styles.screen}>
-      <ActivityIndicator size="large" color={theme.colors.green} />
+      <StatusBar style="light" />
+      <AnimatedLogo />
     </View>
   );
 };
