@@ -6,6 +6,7 @@ export * from "./Field";
 export * from "./GoogleLogo";
 export * from "./LabeledDivider";
 export * from "./LegalDocument";
+export * from "./LoadingScreen";
 export * from "./PitchHeader";
 export * from "./Screen";
 export * from "./Text";

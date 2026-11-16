@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/lib/auth";
 import { accessStage } from "@/lib/accessStage";
 import { ProfileProvider, useProfile } from "@/lib/profile";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
+import { LoadingScreen } from "@/ui";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,7 +35,7 @@ const RootLayout = () => {
 
 const Navigation = () => {
   const theme = useTheme();
-  const { session } = useAuth();
+  const { session, loading: authLoading } = useAuth();
   const { profile, loading, error } = useProfile();
   const stage = accessStage(session !== null, profile, error);
 
@@ -54,7 +55,7 @@ const Navigation = () => {
     };
   }, [theme]);
 
-  if (loading) return null;
+  if (authLoading || loading) return <LoadingScreen />;
 
   return (
     <NavigationThemeProvider value={navigationTheme}>
