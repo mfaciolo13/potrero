@@ -4,7 +4,7 @@ Reglas para escribir código en `apps/mobile` (Expo + React Native + TypeScript)
 
 ## 1. Idioma
 
-- Identificadores en inglés: componentes, hooks, funciones, variables, props, tipos.
+- Identificadores en inglés: componentes, hooks, funciones, variables, props, tipos. Los archivos y las rutas de `app/` también van en inglés (`accept-policies`, no `aceptar-politicas`).
 - Comentarios y textos visibles para el usuario en español.
 
 ## 2. Declaración de funciones
@@ -62,7 +62,7 @@ const handleSave = () => { save(form); };
 - Un componente por archivo, con el nombre del archivo igual al del componente.
 - Tipar las props con un `type` llamado `<Componente>Props`, declarado arriba del componente.
 - Desestructurar las props en el parámetro y dar los valores por defecto ahí.
-- Los componentes de presentación van en `ui/`. Las pantallas van en `app/` y solo arman y conectan componentes.
+- Los componentes de presentación van en `ui/`. Los que usan hooks, navegación o sesión van en `components/`. Las pantallas van en `app/` y solo arman y conectan componentes.
 - Mantener las pantallas finas. La lógica de datos o de estado va en hooks propios.
 
 ## 6. Estilos y tema

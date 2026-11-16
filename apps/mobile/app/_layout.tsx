@@ -4,11 +4,13 @@ import { useEffect, useMemo } from "react";
 
 import { t } from "@/i18n";
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { needsPolicyAcceptance } from "@/lib/policies";
+import { accessStage } from "@/lib/accessStage";
 import { ProfileProvider, useProfile } from "@/lib/profile";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
+
+export const unstable_settings = { initialRouteName: "index" };
 
 const RootLayout = () => {
   const [fontsLoaded, fontsError] = useThemeFonts();
@@ -34,7 +36,7 @@ const Navigation = () => {
   const theme = useTheme();
   const { session } = useAuth();
   const { profile, loading } = useProfile();
-  const needsPolicies = session !== null && needsPolicyAcceptance(profile);
+  const stage = accessStage(session !== null, profile);
 
   const navigationTheme = useMemo(() => {
     const base = theme.scheme === "dark" ? DarkTheme : DefaultTheme;
@@ -57,15 +59,19 @@ const Navigation = () => {
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
-        <Stack.Protected guard={needsPolicies}>
-          <Stack.Screen name="aceptar-politicas" />
+        <Stack.Screen name="index" />
+        <Stack.Protected guard={stage === "login"}>
+          <Stack.Screen name="login" />
         </Stack.Protected>
-        <Stack.Protected guard={!needsPolicies}>
+        <Stack.Protected guard={stage === "policies"}>
+          <Stack.Screen name="accept-policies" />
+        </Stack.Protected>
+        <Stack.Protected guard={stage === "app"}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
-        <Stack.Screen name="politicas-de-uso" />
-        <Stack.Screen name="privacidad" />
-        <Stack.Screen name="eliminar-cuenta" />
+        <Stack.Screen name="terms-of-use" />
+        <Stack.Screen name="privacy" />
+        <Stack.Screen name="delete-account" />
         <Stack.Protected guard={__DEV__}>
           <Stack.Screen name="showcase" options={{ headerShown: true, title: t("navigation.designSystem") }} />
         </Stack.Protected>

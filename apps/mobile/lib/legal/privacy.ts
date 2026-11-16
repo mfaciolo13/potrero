@@ -68,7 +68,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "5. Derechos y borrado de la cuenta",
       blocks: [
-        "Cada persona tiene derecho a acceder a sus datos, rectificarlos y pedir su supresión. La app permite editar el perfil y borrar la cuenta desde la configuración. También se puede pedir por mail a [mail de contacto]. Los detalles están en la página de eliminación de cuenta: /eliminar-cuenta.",
+        "Cada persona tiene derecho a acceder a sus datos, rectificarlos y pedir su supresión. La app permite editar el perfil y borrar la cuenta desde la configuración. También se puede pedir por mail a [mail de contacto]. Los detalles están en la página de eliminación de cuenta: /delete-account.",
         "La Agencia de Acceso a la Información Pública es el órgano de control de la Ley 25.326 y recibe las denuncias por incumplimiento: https://www.argentina.gob.ar/aaip",
       ],
     },

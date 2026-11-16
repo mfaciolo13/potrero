@@ -105,8 +105,8 @@ Se ven sin iniciar sesión. El contenido sale de `lib/legal/` y es una copia de 
 
 | Página | URL | Dónde cargarla |
 | --- | --- | --- |
-| Política de privacidad | https://potrero.expo.app/privacidad | Google Play (política de privacidad) y App Store Connect (URL de privacidad) |
-| Eliminar la cuenta | https://potrero.expo.app/eliminar-cuenta | Google Play (URL para solicitar el borrado de cuenta, sección Seguridad de los datos) |
+| Política de privacidad | https://potrero.expo.app/privacy | Google Play (política de privacidad) y App Store Connect (URL de privacidad) |
+| Eliminar la cuenta | https://potrero.expo.app/delete-account | Google Play (URL para solicitar el borrado de cuenta, sección Seguridad de los datos) |
 
 ## Design system y tema
 

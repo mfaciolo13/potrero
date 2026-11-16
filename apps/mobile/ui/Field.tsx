@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Platform,
   TextInput,
@@ -19,6 +19,7 @@ export type FieldProps = Omit<TextInputProps, "style"> & {
   hint?: string;
   error?: string;
   prefix?: string;
+  trailing?: ReactNode;
   maxLength?: number;
   style?: StyleProp<ViewStyle>;
 };
@@ -59,6 +60,7 @@ export const Field = ({
   hint,
   error,
   prefix,
+  trailing,
   maxLength,
   multiline,
   style,
@@ -115,6 +117,7 @@ export const Field = ({
           onBlur={handleBlur}
           style={[styles.input, multiline && styles.inputMultiline]}
         />
+        {trailing}
       </View>
       {(footer !== undefined || showCounter) && (
         <View style={styles.footer}>

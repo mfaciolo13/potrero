@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -10,7 +11,7 @@ import { makeStyles, useTheme, type ColorName, type Theme } from "@/theme";
 
 import { Text } from "./Text";
 
-export type ButtonVariant = "primary" | "lime" | "outline" | "soft" | "danger" | "ghost" | "glass";
+export type ButtonVariant = "primary" | "lime" | "outline" | "soft" | "danger" | "ghost" | "glass" | "surface";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export type ButtonProps = Omit<PressableProps, "style" | "children"> & {
@@ -18,6 +19,7 @@ export type ButtonProps = Omit<PressableProps, "style" | "children"> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
+  leading?: ReactNode;
   fullWidth?: boolean;
   style?: StyleProp<ViewStyle>;
 };
@@ -32,6 +34,7 @@ const APPEARANCE: Record<ButtonVariant, Appearance> = {
   danger: { bg: "badFg", fg: "badBg" },
   ghost: { bg: "chipBg", fg: "mute" },
   glass: { bg: "onPitchGlass", fg: "onPitch" },
+  surface: { bg: "card", fg: "ink", border: "line" },
 };
 
 type Sizing = { minHeight: number; paddingHorizontal: keyof Theme["spacing"]; fontSize: number };
@@ -62,6 +65,7 @@ export const Button = ({
   variant = "primary",
   size = "md",
   loading = false,
+  leading,
   fullWidth = false,
   disabled,
   style,
@@ -95,6 +99,7 @@ export const Button = ({
       ]}
     >
       {loading && <ActivityIndicator size="small" color={textColor} />}
+      {!loading && leading}
       <Text variant="button" color={appearance.fg} style={{ fontSize: sizing.fontSize }}>
         {label}
       </Text>
