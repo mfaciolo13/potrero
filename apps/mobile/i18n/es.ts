@@ -39,6 +39,11 @@ export const es = {
       tooManyRequests: "Hiciste demasiados intentos. Esperá un rato y probá de nuevo.",
     },
   },
+  profileError: {
+    title: "No pudimos cargar tu perfil",
+    message: "Revisá tu conexión e intentá de nuevo. Si el problema sigue, cerrá sesión y volvé a entrar.",
+    retry: "Reintentar",
+  },
   policies: {
     title: "Antes de empezar",
     intro: "Para usar potrero tenés que leer y aceptar las políticas de uso y la política de privacidad.",
