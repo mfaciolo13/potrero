@@ -36,6 +36,7 @@ El modelo completo, con diagramas y las reglas de negocio que refleja, está en 
 | `db:generate` | Regenera el cliente de Prisma después de cambiar el schema |
 | `db:migrate` | Crea y aplica una migración en desarrollo (`prisma migrate dev`) |
 | `db:deploy` | Aplica las migraciones pendientes sin crear nuevas (`prisma migrate deploy`) |
+| `db:seed:organizer` | Da el rol de organizador a la cuenta con ese mail: `npm run db:seed:organizer -- mail@ejemplo.com`. Usa `DIRECT_URL` y la cuenta tiene que existir en Supabase |
 
 Como la base es compartida, cuidá estos puntos:
 
