@@ -4,7 +4,7 @@ import { useEffect, useMemo } from "react";
 
 import { t } from "@/i18n";
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { accessStage } from "@/lib/accessStage";
+import { ACCESS_STAGE, accessStage } from "@/lib/accessStage";
 import { ProfileProvider, useProfile } from "@/lib/profile";
 import { ThemeProvider, useTheme, useThemeFonts } from "@/theme";
 import { LoadingScreen } from "@/ui";
@@ -61,16 +61,16 @@ const Navigation = () => {
     <NavigationThemeProvider value={navigationTheme}>
       <Stack screenOptions={{ headerShown: false, headerTitleStyle: theme.typography.title }}>
         <Stack.Screen name="index" />
-        <Stack.Protected guard={stage === "login"}>
+        <Stack.Protected guard={stage === ACCESS_STAGE.login}>
           <Stack.Screen name="login" />
         </Stack.Protected>
-        <Stack.Protected guard={stage === "error"}>
+        <Stack.Protected guard={stage === ACCESS_STAGE.error}>
           <Stack.Screen name="profile-error" />
         </Stack.Protected>
-        <Stack.Protected guard={stage === "policies"}>
+        <Stack.Protected guard={stage === ACCESS_STAGE.policies}>
           <Stack.Screen name="accept-policies" />
         </Stack.Protected>
-        <Stack.Protected guard={stage === "app"}>
+        <Stack.Protected guard={stage === ACCESS_STAGE.app}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
         <Stack.Screen name="terms-of-use" />
