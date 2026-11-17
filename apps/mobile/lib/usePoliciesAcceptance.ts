@@ -1,4 +1,3 @@
-import { CURRENT_POLICIES_VERSION } from "@potrero/domain";
 import { useState } from "react";
 
 import { t } from "@/i18n";
@@ -7,7 +6,7 @@ import { apiFetch } from "./api";
 import { useProfile } from "./profile";
 
 export const usePoliciesAcceptance = () => {
-  const { refresh } = useProfile();
+  const { profile, refresh } = useProfile();
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -19,7 +18,7 @@ export const usePoliciesAcceptance = () => {
       const response = await apiFetch("/me/accept-policies", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ version: CURRENT_POLICIES_VERSION }),
+        body: JSON.stringify({ version: profile?.currentPoliciesVersion }),
       });
       if (!response.ok) throw new Error(String(response.status));
       await refresh();

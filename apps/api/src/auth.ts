@@ -1,7 +1,8 @@
-import { hasAcceptedCurrentPolicies } from "@potrero/domain";
+import { hasAcceptedPolicies } from "@potrero/domain";
 import type { RequestHandler } from "express";
 import type { UserRole } from "./generated/prisma/enums.js";
 import { errors } from "jose";
+import type { CurrentPoliciesVersion } from "./policies.js";
 import type { VerifyToken } from "./tokens.js";
 import type { UserStore } from "./users.js";
 
@@ -36,8 +37,8 @@ export function requireRole(...roles: UserRole[]): RequestHandler {
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
 /** Bloquea las escrituras de quien no aceptó la versión vigente de las políticas. Va después de `authenticate`. */
-export function requireAcceptedPolicies(): RequestHandler {
-  return (req, res, next) => {
+export function requireAcceptedPolicies(currentVersion: CurrentPoliciesVersion): RequestHandler {
+  return async (req, res, next) => {
     if (SAFE_METHODS.has(req.method)) {
       next();
       return;
@@ -46,11 +47,15 @@ export function requireAcceptedPolicies(): RequestHandler {
       res.status(401).json({ error: "unauthenticated" });
       return;
     }
-    if (!hasAcceptedCurrentPolicies(req.user.policiesVersion)) {
-      res.status(403).json({ error: "policies_not_accepted" });
-      return;
+    try {
+      if (!hasAcceptedPolicies(req.user.policiesVersion, await currentVersion())) {
+        res.status(403).json({ error: "policies_not_accepted" });
+        return;
+      }
+      next();
+    } catch (error) {
+      next(error);
     }
-    next();
   };
 }
 

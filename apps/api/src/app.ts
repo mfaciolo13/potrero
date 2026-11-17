@@ -1,10 +1,15 @@
-import { CURRENT_POLICIES_VERSION, hasAcceptedCurrentPolicies } from "@potrero/domain";
+import { hasAcceptedPolicies } from "@potrero/domain";
 import cors from "cors";
 import express, { type RequestHandler } from "express";
+import type { CurrentPoliciesVersion, GetCurrentPolicies } from "./policies.js";
 
 export interface AppDeps {
   /** Valida el token y carga req.user. Si no se pasa, /me no existe. */
   authenticate?: RequestHandler;
+  /** Lee la versión vigente de las políticas. Si no se pasa, /me y /me/accept-policies no existen. */
+  currentPoliciesVersion?: CurrentPoliciesVersion;
+  /** Lee la versión vigente de las políticas con su texto. Si no se pasa, /policies/current no existe. */
+  currentPolicies?: GetCurrentPolicies;
   /** Guarda que el usuario aceptó las políticas. Si no se pasa, /me/accept-policies no existe. */
   acceptPolicies?: (userId: string, version: string) => Promise<void>;
   /** Origenes web que pueden llamar a la API. Vacio: no se permite ningun origen. */
@@ -13,7 +18,14 @@ export interface AppDeps {
   pingDb?: () => Promise<void>;
 }
 
-export function createApp({ pingDb, authenticate, acceptPolicies, corsOrigins = [] }: AppDeps = {}) {
+export function createApp({
+  pingDb,
+  authenticate,
+  currentPoliciesVersion,
+  currentPolicies,
+  acceptPolicies,
+  corsOrigins = [],
+}: AppDeps = {}) {
   const app = express();
 
   app.use(cors({ origin: corsOrigins, allowedHeaders: ["Authorization", "Content-Type"] }));
@@ -34,21 +46,41 @@ export function createApp({ pingDb, authenticate, acceptPolicies, corsOrigins = 
     });
   }
 
-  if (authenticate) {
-    app.get("/me", authenticate, (req, res) => {
-      const user = req.user!;
-      res.status(200).json({ ...user, policiesAccepted: hasAcceptedCurrentPolicies(user.policiesVersion) });
+  if (currentPolicies) {
+    app.get("/policies/current", async (_req, res, next) => {
+      try {
+        res.status(200).json(await currentPolicies());
+      } catch (error) {
+        next(error);
+      }
+    });
+  }
+
+  if (authenticate && currentPoliciesVersion) {
+    app.get("/me", authenticate, async (req, res, next) => {
+      try {
+        const user = req.user!;
+        const current = await currentPoliciesVersion();
+        res.status(200).json({
+          ...user,
+          policiesAccepted: hasAcceptedPolicies(user.policiesVersion, current),
+          currentPoliciesVersion: current,
+        });
+      } catch (error) {
+        next(error);
+      }
     });
 
     if (acceptPolicies) {
       app.post("/me/accept-policies", authenticate, async (req, res, next) => {
-        if (req.body?.version !== CURRENT_POLICIES_VERSION) {
-          res.status(400).json({ error: "outdated_policies_version", current: CURRENT_POLICIES_VERSION });
-          return;
-        }
         try {
-          await acceptPolicies(req.user!.id, CURRENT_POLICIES_VERSION);
-          res.status(200).json({ policiesVersion: CURRENT_POLICIES_VERSION, policiesAccepted: true });
+          const current = await currentPoliciesVersion();
+          if (req.body?.version !== current) {
+            res.status(400).json({ error: "outdated_policies_version", current });
+            return;
+          }
+          await acceptPolicies(req.user!.id, current);
+          res.status(200).json({ policiesVersion: current, policiesAccepted: true });
         } catch (error) {
           next(error);
         }

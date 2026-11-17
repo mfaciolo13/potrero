@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { CURRENT_POLICIES_VERSION, hasAcceptedCurrentPolicies } from "./policies.js";
+import { hasAcceptedPolicies } from "./policies.js";
 
-describe("hasAcceptedCurrentPolicies", () => {
+describe("hasAcceptedPolicies", () => {
   it("acepta la versión vigente", () => {
-    expect(hasAcceptedCurrentPolicies(CURRENT_POLICIES_VERSION)).toBe(true);
+    expect(hasAcceptedPolicies("2026-11-12", "2026-11-12")).toBe(true);
   });
 
   it("rechaza una versión anterior", () => {
-    expect(hasAcceptedCurrentPolicies("2025-01-01")).toBe(false);
+    expect(hasAcceptedPolicies("2025-01-01", "2026-11-12")).toBe(false);
   });
 
   it("rechaza si nunca aceptó", () => {
-    expect(hasAcceptedCurrentPolicies(null)).toBe(false);
-    expect(hasAcceptedCurrentPolicies(undefined)).toBe(false);
+    expect(hasAcceptedPolicies(null, "2026-11-12")).toBe(false);
+    expect(hasAcceptedPolicies(undefined, "2026-11-12")).toBe(false);
   });
 });
