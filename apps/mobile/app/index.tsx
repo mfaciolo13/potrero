@@ -1,15 +1,15 @@
 import { Redirect } from "expo-router";
 
-import { accessStage, type AccessStage } from "@/lib/accessStage";
+import { ACCESS_STAGE, accessStage, type AccessStage } from "@/lib/accessStage";
 import { useAuth } from "@/lib/auth";
 import { useProfile } from "@/lib/profile";
 import { LoadingScreen } from "@/ui";
 
 const ENTRY: Record<AccessStage, "/login" | "/profile-error" | "/accept-policies" | "/home"> = {
-  login: "/login",
-  error: "/profile-error",
-  policies: "/accept-policies",
-  app: "/home",
+  [ACCESS_STAGE.login]: "/login",
+  [ACCESS_STAGE.error]: "/profile-error",
+  [ACCESS_STAGE.policies]: "/accept-policies",
+  [ACCESS_STAGE.app]: "/home",
 };
 
 const Entry = () => {
