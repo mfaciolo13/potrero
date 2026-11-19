@@ -70,6 +70,9 @@ const Navigation = () => {
         <Stack.Protected guard={stage === ACCESS_STAGE.policies}>
           <Stack.Screen name="accept-policies" />
         </Stack.Protected>
+        <Stack.Protected guard={stage === ACCESS_STAGE.role}>
+          <Stack.Screen name="choose-role" />
+        </Stack.Protected>
         <Stack.Protected guard={stage === ACCESS_STAGE.app}>
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>

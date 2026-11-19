@@ -6,6 +6,7 @@ import { useAuth } from "./auth";
 export type Profile = {
   id: string;
   role: string | null;
+  organizerRequestPending: boolean;
   policiesVersion: string | null;
   policiesAccepted: boolean;
   currentPoliciesVersion: string;

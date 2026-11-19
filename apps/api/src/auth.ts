@@ -10,6 +10,7 @@ export interface AuthUser {
   id: string;
   role: UserRole | null;
   policiesVersion: string | null;
+  organizerRequestPending: boolean;
 }
 
 declare module "express-serve-static-core" {

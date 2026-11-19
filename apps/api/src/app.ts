@@ -1,6 +1,7 @@
 import { hasAcceptedPolicies } from "@potrero/domain";
 import cors from "cors";
 import express, { type RequestHandler } from "express";
+import type { ChooseRoleResult, ChosenRole } from "./users.js";
 import type { CurrentPoliciesVersion, GetCurrentPolicies } from "./policies.js";
 
 export interface AppDeps {
@@ -10,6 +11,8 @@ export interface AppDeps {
   currentPoliciesVersion?: CurrentPoliciesVersion;
   /** Lee la versión vigente de las políticas con su texto. Si no se pasa, /policies/current no existe. */
   currentPolicies?: GetCurrentPolicies;
+  /** Guarda el rol que elige el usuario. Si no se pasa, /me/role no existe. */
+  chooseRole?: (userId: string, role: ChosenRole) => Promise<ChooseRoleResult>;
   /** Guarda que el usuario aceptó las políticas. Si no se pasa, /me/accept-policies no existe. */
   acceptPolicies?: (userId: string, version: string) => Promise<void>;
   /** Origenes web que pueden llamar a la API. Vacio: no se permite ningun origen. */
@@ -24,6 +27,7 @@ export function createApp({
   currentPoliciesVersion,
   currentPolicies,
   acceptPolicies,
+  chooseRole,
   corsOrigins = [],
 }: AppDeps = {}) {
   const app = express();
@@ -70,6 +74,26 @@ export function createApp({
         next(error);
       }
     });
+
+    if (chooseRole) {
+      app.post("/me/role", authenticate, async (req, res, next) => {
+        const role = req.body?.role;
+        if (role !== "PLAYER" && role !== "ORGANIZER") {
+          res.status(400).json({ error: "invalid_role" });
+          return;
+        }
+        try {
+          const result = await chooseRole(req.user!.id, role);
+          if (!result.ok) {
+            res.status(409).json({ error: result.error });
+            return;
+          }
+          res.status(200).json({ role });
+        } catch (error) {
+          next(error);
+        }
+      });
+    }
 
     if (acceptPolicies) {
       app.post("/me/accept-policies", authenticate, async (req, res, next) => {

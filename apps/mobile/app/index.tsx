@@ -5,10 +5,11 @@ import { useAuth } from "@/lib/auth";
 import { useProfile } from "@/lib/profile";
 import { LoadingScreen } from "@/ui";
 
-const ENTRY: Record<AccessStage, "/login" | "/profile-error" | "/accept-policies" | "/home"> = {
+const ENTRY: Record<AccessStage, "/login" | "/profile-error" | "/accept-policies" | "/choose-role" | "/home"> = {
   [ACCESS_STAGE.login]: "/login",
   [ACCESS_STAGE.error]: "/profile-error",
   [ACCESS_STAGE.policies]: "/accept-policies",
+  [ACCESS_STAGE.role]: "/choose-role",
   [ACCESS_STAGE.app]: "/home",
 };
 

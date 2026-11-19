@@ -44,6 +44,28 @@ export const es = {
     message: "Revisá tu conexión e intentá de nuevo. Si el problema sigue, cerrá sesión y volvé a entrar.",
     retry: "Reintentar",
   },
+  role: {
+    title: "¿Qué vas a hacer?",
+    subtitle: "Un organizador no juega en los torneos.",
+    label: "Quiero usar la app como",
+    player: {
+      title: "Jugador",
+      badge: "Inmediato",
+      description:
+        "Te postulás a equipos, tenés perfil con estadísticas, podés crear tu equipo y ser capitán. Listo para terminar.",
+    },
+    organizer: {
+      title: "Organizador",
+      badge: "Requiere aprobación",
+      description:
+        "Creás torneos en tu región, invitás árbitros, confirmás pagos y el equipo de Potrero lo aprueba.",
+    },
+    continue: "Continuar",
+    errors: {
+      saveFailed: "No pudimos guardar tu elección. Probá de nuevo.",
+      regionRequired: "Primero tenés que declarar tu región.",
+    },
+  },
   legal: {
     error: {
       title: "No pudimos cargar el texto",
