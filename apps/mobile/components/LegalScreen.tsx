@@ -1,17 +1,37 @@
 import { useRouter } from "expo-router";
 
 import { t } from "@/i18n";
-import type { LegalDocument as LegalDocumentData } from "@/lib/legal/types";
-import { LegalDocument } from "@/ui";
+import { useLegalDocument, type LegalDocumentKey } from "@/lib/useLegalDocument";
+import { makeStyles } from "@/theme";
+import { Button, LegalDocument, LoadingScreen, Screen, Text } from "@/ui";
 
-export type LegalScreenProps = { document: LegalDocumentData };
+const useStyles = makeStyles((theme) => ({
+  content: { justifyContent: "center", gap: theme.spacing.s4 },
+}));
 
-export const LegalScreen = ({ document }: LegalScreenProps) => {
+export type LegalScreenProps = { documentKey: LegalDocumentKey };
+
+export const LegalScreen = ({ documentKey }: LegalScreenProps) => {
   const router = useRouter();
+  const styles = useStyles();
+  const { document, error, retry } = useLegalDocument(documentKey);
 
   const handleBack = () => {
     router.replace("/");
   };
 
-  return <LegalDocument document={document} backLabel={t("navigation.back")} onBack={handleBack} />;
+  if (document) {
+    return <LegalDocument document={document} backLabel={t("navigation.back")} onBack={handleBack} />;
+  }
+
+  if (!error) return <LoadingScreen />;
+
+  return (
+    <Screen edges={["top", "left", "right"]} contentStyle={styles.content}>
+      <Text variant="displayTitle">{t("legal.error.title")}</Text>
+      <Text color="mute">{t("legal.error.message")}</Text>
+      <Button label={t("legal.error.retry")} fullWidth onPress={retry} />
+      <Button label={t("navigation.back")} variant="ghost" fullWidth onPress={handleBack} />
+    </Screen>
+  );
 };

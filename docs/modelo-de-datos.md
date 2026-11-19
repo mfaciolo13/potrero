@@ -94,6 +94,7 @@ erDiagram
 | Tabla | Qué guarda |
 | --- | --- |
 | `regions` | Catálogo de regiones que mantiene el admin (RF-38). |
+| `policy_versions` | Versiones de las políticas. Una sola está vigente (`current`); `users.policies_version` referencia la que aceptó cada persona. El texto (usos, privacidad y baja de cuenta) se guarda en `documents` y la app lo pide a `GET /policies/current`. |
 | `users` | Perfil, rol, región, aceptación de políticas, verificación de identidad y baja. |
 | `organizer_requests` | Pedido para ser organizador con descripción y fotos del lugar, y su revisión (RF-07, RF-08). |
 | `teams` | Equipo con región, capitán y código para el link de invitación (RF-10, RF-13). |

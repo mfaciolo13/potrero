@@ -120,6 +120,17 @@ model Region {
   @@map("regions")
 }
 
+model PolicyVersion {
+  id          String   @id
+  publishedAt DateTime @default(now()) @map("published_at") @db.Timestamptz(3)
+  current     Boolean  @default(false)
+  documents   Json
+
+  users User[]
+
+  @@map("policy_versions")
+}
+
 model User {
   id                 String    @id @db.Uuid
   name               String
@@ -135,9 +146,10 @@ model User {
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  region       Region? @relation(fields: [regionId], references: [id])
-  removedBy    User?   @relation("UserRemoval", fields: [removedById], references: [id])
-  removedUsers User[]  @relation("UserRemoval")
+  region       Region?        @relation(fields: [regionId], references: [id])
+  policies     PolicyVersion? @relation(fields: [policiesVersion], references: [id])
+  removedBy    User?          @relation("UserRemoval", fields: [removedById], references: [id])
+  removedUsers User[]         @relation("UserRemoval")
 
   organizerRequests         OrganizerRequest[]  @relation("OrganizerRequester")
   reviewedOrganizerRequests OrganizerRequest[]  @relation("OrganizerRequestReviewer")

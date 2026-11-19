@@ -8,6 +8,7 @@ export type Profile = {
   role: string | null;
   policiesVersion: string | null;
   policiesAccepted: boolean;
+  currentPoliciesVersion: string;
 };
 
 type ProfileState = {

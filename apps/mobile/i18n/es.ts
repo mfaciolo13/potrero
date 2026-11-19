@@ -44,6 +44,13 @@ export const es = {
     message: "Revisá tu conexión e intentá de nuevo. Si el problema sigue, cerrá sesión y volvé a entrar.",
     retry: "Reintentar",
   },
+  legal: {
+    error: {
+      title: "No pudimos cargar el texto",
+      message: "Revisá tu conexión e intentá de nuevo.",
+      retry: "Reintentar",
+    },
+  },
   policies: {
     title: "Antes de empezar",
     intro: "Para usar potrero tenés que leer y aceptar las políticas de uso y la política de privacidad.",

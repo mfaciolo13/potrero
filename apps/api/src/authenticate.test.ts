@@ -2,7 +2,6 @@ import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type JWK } from "jose";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { CURRENT_POLICIES_VERSION } from "@potrero/domain";
 import { createApp } from "./app.js";
 import { authenticate } from "./auth.js";
 import { createTokenVerifier } from "./tokens.js";
@@ -10,6 +9,7 @@ import { displayName, type UserStore } from "./users.js";
 
 const SUPABASE_URL = "https://abc.supabase.co";
 const ISSUER = `${SUPABASE_URL}/auth/v1`;
+let CURRENT_POLICIES_VERSION = "2026-11-12";
 const USER_ID = "7c9e6679-7425-40de-944b-e07fc1f90ae7";
 
 const { publicKey, privateKey } = await generateKeyPair("ES256");
@@ -51,6 +51,7 @@ describe("authenticate", () => {
     const verify = createTokenVerifier(SUPABASE_URL, createLocalJWKSet({ keys: [jwk] }));
     const app = createApp({
       authenticate: authenticate(verify, store),
+      currentPoliciesVersion: async () => CURRENT_POLICIES_VERSION,
       acceptPolicies: (userId, version) => store.acceptPolicies(userId, version),
     });
     await new Promise<void>((resolve) => {
@@ -96,7 +97,7 @@ describe("authenticate", () => {
   it("acepta un token valido y crea el usuario sin rol", async () => {
     const res = await me(await sign());
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ id: USER_ID, role: null, policiesVersion: null, policiesAccepted: false });
+    expect(await res.json()).toEqual({ id: USER_ID, role: null, policiesVersion: null, policiesAccepted: false, currentPoliciesVersion: "2026-11-12" });
     expect(rows.get(USER_ID)?.name).toBe("ana");
   });
 
@@ -107,6 +108,7 @@ describe("authenticate", () => {
       role: "PLAYER",
       policiesVersion: null,
       policiesAccepted: false,
+      currentPoliciesVersion: "2026-11-12",
     });
   });
 
@@ -138,6 +140,19 @@ describe("authenticate", () => {
     expect(rows.get(USER_ID)?.policiesVersion).toBe(CURRENT_POLICIES_VERSION);
     const me = await (await fetch(`${baseUrl}/me`, { headers: { authorization: `Bearer ${await sign()}` } })).json();
     expect(me.policiesAccepted).toBe(true);
+  });
+
+  it("informa la versión vigente y deja de dar por aceptada una anterior cuando cambia", async () => {
+    const token = await sign();
+    const get = async () => (await fetch(`${baseUrl}/me`, { headers: { authorization: `Bearer ${token}` } })).json();
+    expect((await get()).currentPoliciesVersion).toBe("2026-11-12");
+    CURRENT_POLICIES_VERSION = "2026-12-01";
+    const after = await get();
+    expect(after.currentPoliciesVersion).toBe("2026-12-01");
+    expect(after.policiesAccepted).toBe(false);
+    expect((await accept(token, { version: "2026-11-12" })).status).toBe(400);
+    expect((await accept(token, { version: "2026-12-01" })).status).toBe(200);
+    expect(rows.get(USER_ID)?.policiesVersion).toBe("2026-12-01");
   });
 
   it("rechaza con 403 a un usuario dado de baja", async () => {
