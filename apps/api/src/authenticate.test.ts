@@ -1,7 +1,7 @@
 import type { Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type JWK } from "jose";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "./app.js";
 import { authenticate } from "./auth.js";
 import { createTokenVerifier } from "./tokens.js";
@@ -36,10 +36,23 @@ const store: UserStore = {
   async upsertFromClaims(claims) {
     if (!rows.has(claims.id)) rows.set(claims.id, { role: null, removed: false, name: displayName(claims), policiesVersion: null });
     const row = rows.get(claims.id)!;
-    return { id: claims.id, role: row.role, policiesVersion: row.policiesVersion, removed: row.removed };
+    return {
+      id: claims.id,
+      role: row.role,
+      policiesVersion: row.policiesVersion,
+      organizerRequestPending: false,
+      removed: row.removed,
+    };
   },
   async acceptPolicies(userId, version) {
     rows.get(userId)!.policiesVersion = version;
+  },
+  async chooseRole(userId, role) {
+    const row = rows.get(userId)!;
+    if (row.role !== null) return { ok: false, error: "role_already_chosen" };
+    if (role === "ORGANIZER") return { ok: false, error: "region_required" };
+    row.role = role;
+    return { ok: true };
   },
 };
 
@@ -53,6 +66,7 @@ describe("authenticate", () => {
       authenticate: authenticate(verify, store),
       currentPoliciesVersion: async () => CURRENT_POLICIES_VERSION,
       acceptPolicies: (userId, version) => store.acceptPolicies(userId, version),
+      chooseRole: (userId, role) => store.chooseRole(userId, role),
     });
     await new Promise<void>((resolve) => {
       server = app.listen(0, () => resolve());
@@ -97,7 +111,7 @@ describe("authenticate", () => {
   it("acepta un token valido y crea el usuario sin rol", async () => {
     const res = await me(await sign());
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ id: USER_ID, role: null, policiesVersion: null, policiesAccepted: false, currentPoliciesVersion: "2026-11-12" });
+    expect(await res.json()).toEqual({ id: USER_ID, role: null, policiesVersion: null, policiesAccepted: false, currentPoliciesVersion: "2026-11-12", organizerRequestPending: false });
     expect(rows.get(USER_ID)?.name).toBe("ana");
   });
 
@@ -109,6 +123,7 @@ describe("authenticate", () => {
       policiesVersion: null,
       policiesAccepted: false,
       currentPoliciesVersion: "2026-11-12",
+      organizerRequestPending: false,
     });
   });
 
@@ -153,6 +168,46 @@ describe("authenticate", () => {
     expect((await accept(token, { version: "2026-11-12" })).status).toBe(400);
     expect((await accept(token, { version: "2026-12-01" })).status).toBe(200);
     expect(rows.get(USER_ID)?.policiesVersion).toBe("2026-12-01");
+  });
+
+  describe("POST /me/role", () => {
+    beforeEach(() => {
+      rows.get(USER_ID)!.role = null;
+    });
+
+    const choose = async (body: unknown, token?: string) =>
+      fetch(`${baseUrl}/me/role`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify(body),
+      });
+
+    it("exige token", async () => {
+      expect((await choose({ role: "PLAYER" })).status).toBe(401);
+    });
+
+    it("rechaza un rol que el cliente no puede elegir", async () => {
+      const token = await sign();
+      for (const role of ["ADMIN", "REFEREE", "", undefined]) {
+        expect((await choose({ role }, token)).status).toBe(400);
+      }
+      expect(rows.get(USER_ID)?.role).toBeNull();
+    });
+
+    it("avisa si falta la región para pedir ser organizador", async () => {
+      const res = await choose({ role: "ORGANIZER" }, await sign());
+      expect(res.status).toBe(409);
+      expect(await res.json()).toEqual({ error: "region_required" });
+    });
+
+    it("guarda el rol de jugador y no deja volver a elegir", async () => {
+      const token = await sign();
+      expect((await choose({ role: "PLAYER" }, token)).status).toBe(200);
+      expect(rows.get(USER_ID)?.role).toBe("PLAYER");
+      const again = await choose({ role: "PLAYER" }, token);
+      expect(again.status).toBe(409);
+      expect(await again.json()).toEqual({ error: "role_already_chosen" });
+    });
   });
 
   it("rechaza con 403 a un usuario dado de baja", async () => {

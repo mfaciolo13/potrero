@@ -17,6 +17,7 @@ const app = createApp({
   currentPolicies: createCurrentPolicies(prisma),
   authenticate: authenticate(createTokenVerifier(env.SUPABASE_URL), users),
   acceptPolicies: (userId, version) => users.acceptPolicies(userId, version),
+  chooseRole: (userId, role) => users.chooseRole(userId, role),
 });
 
 app.listen(env.PORT, () => {

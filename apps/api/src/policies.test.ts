@@ -7,7 +7,7 @@ import { requireAcceptedPolicies, type AuthUser } from "./auth.js";
 const CURRENT_POLICIES_VERSION = "2026-11-12";
 
 const asUser = (policiesVersion: string | null): express.RequestHandler => (req, _res, next) => {
-  const user: AuthUser = { id: "u1", role: null, policiesVersion };
+  const user: AuthUser = { id: "u1", role: null, policiesVersion, organizerRequestPending: false };
   if (req.header("x-anonymous") !== "1") req.user = user;
   next();
 };

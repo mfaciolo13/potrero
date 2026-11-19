@@ -31,7 +31,7 @@ Para quitarlo, el mismo comando con el rol que corresponda, o `NULL`.
 
 Los endpoints que cambian roles tienen que respetar estos límites:
 
-- Elegir rol (RF-05) solo acepta `PLAYER`. Quien elige organizador queda con su rol actual hasta que el admin apruebe la solicitud.
+- Elegir rol (RF-05, `POST /me/role`) solo acepta `PLAYER` u `ORGANIZER`, y solo si la persona todavía no tiene rol. `PLAYER` se guarda al instante. `ORGANIZER` no cambia el rol: crea una solicitud pendiente en su región (hace falta que haya declarado una) y la persona queda sin rol hasta que el admin la apruebe. Mientras no exista el formulario de RF-07, la solicitud se crea con la descripción vacía.
 - Nada que reciba un rol desde el cliente puede escribir `ADMIN`.
 - El rol `REFEREE` solo se asigna al aceptar una invitación válida.
 
